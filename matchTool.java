@@ -36,7 +36,9 @@ class toolGui extends JFrame implements ActionListener
 	BufferedWriter bw;
 	String recievedLine;
 	File outputFile;
+	File secretKeyFile;
 	FileWriter fw;
+	FileReader fr;
 
 	public toolGui()
 	{
@@ -50,6 +52,7 @@ class toolGui extends JFrame implements ActionListener
 		textFieldPanel = new JPanel(new FlowLayout());
 		lookupButton = new JButton("Look Up");
 		outputFile = new File("MatchData.txt");
+		secretKeyFile = new File("data.data");
 
 
 		///////Adding stuff to various parts//////
@@ -69,6 +72,9 @@ class toolGui extends JFrame implements ActionListener
 		mainFrame.setSize(500,300);
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setVisible(true);
+
+		///////Doing Start up stuff////////
+		readSecretKey();
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -157,5 +163,23 @@ class toolGui extends JFrame implements ActionListener
 				System.out.println("I caught an IOException");
 				ioe.printStackTrace();
 			}
+	}
+
+	public void readSecretKey()
+	{
+		try
+		{
+			if(secretKeyFile.exists())
+			{
+				fr = new FileReader(secretKeyFile);
+				br = new BufferedReader(fr);
+				secretKeyField.setText(br.readLine());
+			}
+		}
+		catch(IOException ioe)
+		{
+			System.out.println("I caught an IOException when trying to read the previously used secret key");
+			ioe.printStackTrace();
+		}
 	}
 }

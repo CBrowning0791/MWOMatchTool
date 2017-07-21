@@ -27,6 +27,8 @@ class toolGui extends JFrame implements ActionListener
 	JTextField matchIdField;
 	JTextField secretKeyField;
 	JPanel textFieldPanel;
+	JPanel mapDataPanel;
+	JTable dataTable;
 	JLabel matchIdLabel;
 	JLabel secretKeyLabel;
 	JButton lookupButton;
@@ -39,6 +41,7 @@ class toolGui extends JFrame implements ActionListener
 	File secretKeyFile;
 	FileWriter fw;
 	FileReader fr;
+	JTabbedPane dataPane;
 
 	public toolGui()
 	{
@@ -51,8 +54,11 @@ class toolGui extends JFrame implements ActionListener
 		secretKeyField = new JTextField(10);
 		textFieldPanel = new JPanel(new FlowLayout());
 		lookupButton = new JButton("Look Up");
-		outputFile = new File("MatchData.txt");
+		//outputFile = new File("MatchData.txt");
 		secretKeyFile = new File("data.data");
+		dataPane = new JTabbedPane();
+		mapDataPanel = new JPanel(new FlowLayout());
+
 
 
 		///////Adding stuff to various parts//////
@@ -83,6 +89,9 @@ class toolGui extends JFrame implements ActionListener
 		switch(e.getActionCommand())
 		{
 			case "LOOK_UP":
+							String fileName = matchIdField.getText();
+							fileName = fileName + ".txt";
+							outputFile = new File(fileName);
 							connectToMWO(matchIdField.getText(),secretKeyField.getText());
 							break;
 		}
@@ -154,6 +163,7 @@ class toolGui extends JFrame implements ActionListener
 					recievedLine = recievedLine.replace("[","\r\n");
 					recievedLine = recievedLine.replace("]","");
 					recievedLine = recievedLine.replace("\"","");
+					recievedLine = recievedLine.replace(":",": ");
 					bw.write(recievedLine);
 				}
 				bw.close();
@@ -174,6 +184,8 @@ class toolGui extends JFrame implements ActionListener
 				fr = new FileReader(secretKeyFile);
 				br = new BufferedReader(fr);
 				secretKeyField.setText(br.readLine());
+				br.close();
+				fr.close();
 			}
 		}
 		catch(IOException ioe)

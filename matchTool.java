@@ -92,6 +92,7 @@ class toolGui extends JFrame implements ActionListener
 							String fileName = matchIdField.getText();
 							fileName = fileName + ".txt";
 							outputFile = new File(fileName);
+							writeSecretKey();
 							connectToMWO(matchIdField.getText(),secretKeyField.getText());
 							break;
 		}
@@ -191,6 +192,21 @@ class toolGui extends JFrame implements ActionListener
 		catch(IOException ioe)
 		{
 			System.out.println("I caught an IOException when trying to read the previously used secret key");
+			ioe.printStackTrace();
+		}
+	}
+
+	public void writeSecretKey()
+	{
+		try
+		{
+			fw = new FileWriter(secretKeyFile);
+			fw.write(secretKeyField.getText());
+			fw.close();
+		}
+		catch(IOException ioe)
+		{
+			System.out.println("I caught an IOException when trying to write the secret key to save it");
 			ioe.printStackTrace();
 		}
 	}

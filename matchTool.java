@@ -28,6 +28,8 @@ class toolGui extends JFrame implements ActionListener
 	JTextField secretKeyField;
 	JPanel textFieldPanel;
 	JPanel mapDataPanel;
+	JPanel teamOneDataPanel;
+	JPanel teamTwoDataPanel;
 	JTable dataTable;
 	JLabel matchIdLabel;
 	JLabel secretKeyLabel;
@@ -58,6 +60,8 @@ class toolGui extends JFrame implements ActionListener
 		secretKeyFile = new File("data.data");
 		dataPane = new JTabbedPane();
 		mapDataPanel = new JPanel(new FlowLayout());
+		teamOneDataPanel = new JPanel(new FlowLayout());
+		teamTwoDataPanel = new JPanel(new FlowLayout());
 
 
 
@@ -66,12 +70,17 @@ class toolGui extends JFrame implements ActionListener
 		textFieldPanel.add(matchIdField);
 		textFieldPanel.add(secretKeyLabel);
 		textFieldPanel.add(secretKeyField);
-		mainFrame.add(textFieldPanel, BorderLayout.PAGE_START);
-		mainFrame.add(lookupButton, BorderLayout.PAGE_END);
 
 		lookupButton.setActionCommand("LOOK_UP");
 		lookupButton.addActionListener(this);
 
+		dataPane.addTab("Match Info", mapDataPanel);
+		dataPane.addTab("Team One", teamOneDataPanel);
+		dataPane.addTab("Team Two", teamTwoDataPanel);
+
+		mainFrame.add(textFieldPanel, BorderLayout.PAGE_START);
+		mainFrame.add(lookupButton, BorderLayout.PAGE_END);
+		mainFrame.add(dataPane, BorderLayout.CENTER);
 
 		///////Making things visible/////////
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

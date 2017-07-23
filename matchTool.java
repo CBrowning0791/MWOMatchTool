@@ -56,10 +56,13 @@ class toolGui extends JFrame implements ActionListener
 	JTabbedPane dataPane;
 
 	DefaultListModel mapListModel;
+	DefaultListModel teamListTwoModel;
 
 	JScrollPane mapScrollPane;
+	JScrollPane teamTwoScrollPane;
 
 	JList mapListGUI;
+	JList teamListTwoGUI;
 
 	public toolGui()
 	{
@@ -72,15 +75,22 @@ class toolGui extends JFrame implements ActionListener
 		secretKeyField = new JTextField(10);
 		textFieldPanel = new JPanel(new FlowLayout());
 		lookupButton = new JButton("Look Up");
+		
 		//outputFile = new File("MatchData.txt");
 		secretKeyFile = new File("data.data");
+		
 		dataPane = new JTabbedPane();
 		mapDataPanel = new JPanel(new BorderLayout());
 		teamOneDataPanel = new JPanel(new FlowLayout());
 		teamTwoDataPanel = new JPanel(new FlowLayout());
+		
 		mapListModel = new DefaultListModel();
 		mapListGUI = new JList(mapListModel);
 		mapScrollPane = new JScrollPane(mapListGUI, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		teamListTwoModel = new DefaultListModel();
+		teamListTwoGUI = new JList(teamListTwoModel);
+		teamTwoScrollPane = new JScrollPane(teamListTwoGUI, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 
 
@@ -94,6 +104,7 @@ class toolGui extends JFrame implements ActionListener
 		lookupButton.addActionListener(this);
 
 		mapDataPanel.add(mapScrollPane, BorderLayout.CENTER);
+		teamTwoDataPanel.add(teamTwoScrollPane, BorderLayout.CENTER);
 
 		dataPane.addTab("Match Info", mapDataPanel);
 		dataPane.addTab("Team One", teamOneDataPanel);
@@ -106,7 +117,7 @@ class toolGui extends JFrame implements ActionListener
 
 		///////Making things visible/////////
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setSize(500,300);
+		mainFrame.setSize(600,300);
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setVisible(true);
 
@@ -258,7 +269,7 @@ class toolGui extends JFrame implements ActionListener
 				mapListModel.addElement(line);
 			}while((line = br.readLine()) != null && !line.contains("CompleteTime:"));
 			System.out.println(line);
-			//writeTeamOne(br);
+			writeTeamTwo(br);
 			br.close();
 			fr.close();
 		}
@@ -268,12 +279,66 @@ class toolGui extends JFrame implements ActionListener
 			ioe.printStackTrace();
 		}
 	}
-	/*public void writeTeamOne(BufferedReader br)
+	public void writeTeamTwo(BufferedReader br)
 	{
 		Vector teamOneVector;
 		String line;
-		line = br.readLine();
-		System.out.println(line);
+		String vectorString = new String();
+		int x = 0;
+		System.out.println("Test");
+		try
+		{
+		while((line = br.readLine()) != null)
+		{
+			System.out.println("I parsed this: " + line);
+			if(line.contains("Username:"))
+			{
+				vectorString = line.replace("Username:","");
+			}
+			else if(line.contains("Team: 1"))
+			{
 
-	}*/
+			}
+			else if(line.contains("MechName: "))
+			{
+				vectorString = vectorString + line.replace("MechName:","");
+				vectorString = vectorString + " ";
+			}
+			else if(line.contains("Kills: "))
+			{
+				vectorString = vectorString + line;
+				vectorString = vectorString + " ";
+			}
+			else if(line.contains("Assists: "))
+			{
+				vectorString = vectorString + line;
+				vectorString = vectorString + " ";
+			}
+			else if(line.contains("KillsMostDamage:"))
+			{
+				line = line.replace("KillsMostDamage:","KMDD: ");
+				vectorString = vectorString + line;
+				vectorString = vectorString + " ";
+			}
+			else if(line.contains("TeamDamage:"))
+			{
+				line = line.replace("TeamDamage","Team Damage");
+				vectorString = vectorString + line;
+				teamListTwoModel.addElement(vectorString);
+				vectorString = "";
+			}			
+			else if(line.contains("Damage:"))
+			{
+				vectorString = vectorString + line;
+				vectorString = vectorString + " ";
+			}
+		}
+		}
+		catch(IOException ioe)
+		{
+			System.out.println("I caught an IOException when attempting to write to the GUI from file.");
+			ioe.printStackTrace();
+		}
+
+	}
 }

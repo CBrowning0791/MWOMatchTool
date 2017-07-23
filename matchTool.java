@@ -24,26 +24,42 @@ public class matchTool
 class toolGui extends JFrame implements ActionListener
 {
 	JFrame mainFrame;
+
 	JTextField matchIdField;
 	JTextField secretKeyField;
+
 	JPanel textFieldPanel;
 	JPanel mapDataPanel;
 	JPanel teamOneDataPanel;
 	JPanel teamTwoDataPanel;
+
 	JTable dataTable;
+
 	JLabel matchIdLabel;
 	JLabel secretKeyLabel;
+
 	JButton lookupButton;
+
 	URL mwoURL;
+
 	InputStream is;
 	BufferedReader br;
 	BufferedWriter bw;
+
 	String recievedLine;
+
 	File outputFile;
 	File secretKeyFile;
 	FileWriter fw;
 	FileReader fr;
+
 	JTabbedPane dataPane;
+
+	DefaultListModel mapListModel;
+
+	JScrollPane mapScrollPane;
+
+	JList mapListGUI;
 
 	public toolGui()
 	{
@@ -59,9 +75,12 @@ class toolGui extends JFrame implements ActionListener
 		//outputFile = new File("MatchData.txt");
 		secretKeyFile = new File("data.data");
 		dataPane = new JTabbedPane();
-		mapDataPanel = new JPanel(new FlowLayout());
+		mapDataPanel = new JPanel(new BorderLayout());
 		teamOneDataPanel = new JPanel(new FlowLayout());
 		teamTwoDataPanel = new JPanel(new FlowLayout());
+		mapListModel = new DefaultListModel();
+		mapListGUI = new JList(mapListModel);
+		mapScrollPane = new JScrollPane(mapListGUI, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 
 
@@ -74,6 +93,8 @@ class toolGui extends JFrame implements ActionListener
 		lookupButton.setActionCommand("LOOK_UP");
 		lookupButton.addActionListener(this);
 
+		mapDataPanel.add(mapScrollPane, BorderLayout.CENTER);
+
 		dataPane.addTab("Match Info", mapDataPanel);
 		dataPane.addTab("Team One", teamOneDataPanel);
 		dataPane.addTab("Team Two", teamTwoDataPanel);
@@ -81,6 +102,7 @@ class toolGui extends JFrame implements ActionListener
 		mainFrame.add(textFieldPanel, BorderLayout.PAGE_START);
 		mainFrame.add(lookupButton, BorderLayout.PAGE_END);
 		mainFrame.add(dataPane, BorderLayout.CENTER);
+
 
 		///////Making things visible/////////
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,6 +125,7 @@ class toolGui extends JFrame implements ActionListener
 							outputFile = new File(fileName);
 							writeSecretKey();
 							connectToMWO(matchIdField.getText(),secretKeyField.getText());
+							writeMatchDetails();
 							break;
 		}
 	}
@@ -161,7 +184,7 @@ class toolGui extends JFrame implements ActionListener
 					System.out.println("Output file doesn't exist yet, creating it");
 					outputFile.createNewFile();
 				}
-				fw = new FileWriter(outputFile,true);
+				fw = new FileWriter(outputFile);
 				bw = new BufferedWriter(fw);
 
 				while ((recievedLine = br.readLine()) != null)
@@ -219,4 +242,38 @@ class toolGui extends JFrame implements ActionListener
 			ioe.printStackTrace();
 		}
 	}
+
+	public void writeMatchDetails()
+	{
+		String line = new String();
+		try
+		{
+			fr = new FileReader(outputFile);
+			br = new BufferedReader(fr);
+			do 
+			{
+				if(line.contains("MatchDetails: "))
+					line = line.replace("MatchDetails: ","");
+				System.out.println(line);
+				mapListModel.addElement(line);
+			}while((line = br.readLine()) != null && !line.contains("CompleteTime:"));
+			System.out.println(line);
+			//writeTeamOne(br);
+			br.close();
+			fr.close();
+		}
+		catch(IOException ioe)
+		{
+			System.out.println("I caught an IOException when attempting to write to the GUI from file.");
+			ioe.printStackTrace();
+		}
+	}
+	/*public void writeTeamOne(BufferedReader br)
+	{
+		Vector teamOneVector;
+		String line;
+		line = br.readLine();
+		System.out.println(line);
+
+	}*/
 }

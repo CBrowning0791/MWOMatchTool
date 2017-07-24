@@ -57,12 +57,15 @@ class toolGui extends JFrame implements ActionListener
 
 	DefaultListModel mapListModel;
 	DefaultListModel teamListTwoModel;
+	DefaultListModel teamListOneModel;
 
 	JScrollPane mapScrollPane;
 	JScrollPane teamTwoScrollPane;
+	JScrollPane teamOneScrollPane;
 
 	JList mapListGUI;
 	JList teamListTwoGUI;
+	JList teamListOneGUI;
 
 	public toolGui()
 	{
@@ -92,6 +95,9 @@ class toolGui extends JFrame implements ActionListener
 		teamListTwoGUI = new JList(teamListTwoModel);
 		teamTwoScrollPane = new JScrollPane(teamListTwoGUI, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
+		teamListOneModel = new DefaultListModel();
+		teamListOneGUI = new JList(teamListOneModel);
+		teamOneScrollPane = new JScrollPane(teamListOneGUI, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 
 		///////Adding stuff to various parts//////
@@ -105,6 +111,7 @@ class toolGui extends JFrame implements ActionListener
 
 		mapDataPanel.add(mapScrollPane, BorderLayout.CENTER);
 		teamTwoDataPanel.add(teamTwoScrollPane, BorderLayout.CENTER);
+		teamOneDataPanel.add(teamOneScrollPane, BorderLayout.CENTER);
 
 		dataPane.addTab("Match Info", mapDataPanel);
 		dataPane.addTab("Team One", teamOneDataPanel);
@@ -269,7 +276,7 @@ class toolGui extends JFrame implements ActionListener
 				mapListModel.addElement(line);
 			}while((line = br.readLine()) != null && !line.contains("CompleteTime:"));
 			System.out.println(line);
-			writeTeamTwo(br);
+			writeTeam(br);
 			br.close();
 			fr.close();
 		}
@@ -279,12 +286,12 @@ class toolGui extends JFrame implements ActionListener
 			ioe.printStackTrace();
 		}
 	}
-	public void writeTeamTwo(BufferedReader br)
+	public void writeTeam(BufferedReader br)
 	{
 		Vector teamOneVector;
 		String line;
 		String vectorString = new String();
-		int x = 0;
+		Boolean teamOne = false;
 		System.out.println("Test");
 		try
 		{
@@ -297,7 +304,7 @@ class toolGui extends JFrame implements ActionListener
 			}
 			else if(line.contains("Team: 1"))
 			{
-
+				teamOne = true;
 			}
 			else if(line.contains("MechName: "))
 			{
@@ -324,7 +331,10 @@ class toolGui extends JFrame implements ActionListener
 			{
 				line = line.replace("TeamDamage","Team Damage");
 				vectorString = vectorString + line;
-				teamListTwoModel.addElement(vectorString);
+				if(teamOne == true)
+					teamListOneModel.addElement(vectorString);
+				else
+					teamListTwoModel.addElement(vectorString);
 				vectorString = "";
 			}			
 			else if(line.contains("Damage:"))
